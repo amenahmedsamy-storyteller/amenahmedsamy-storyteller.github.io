@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Barlow:wght@300;400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --ink: #0e0d0b;
+    --cream: #f5f0e8;
+    --warm: #c8a96e;
+    --dim: #6b6560;
+    --rule: rgba(200,169,110,0.3);
+  }
+
+  body {
+    background: var(--ink);
+    color: var(--cream);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* GRAIN OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.6;
+  }
+
+  /* FILM STRIP HEADER */
+  .film-header {
+    position: relative;
+    padding: 60px 48px 48px;
+    border-bottom: 0.5px solid var(--rule);
+  }
+
+  .film-perfs {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 18px;
+    display: flex;
+    gap: 6px;
+    padding: 3px 8px;
+    align-items: center;
+  }
+
+  .perf {
+    width: 20px; height: 12px;
+    border-radius: 2px;
+    background: rgba(200,169,110,0.15);
+    border: 0.5px solid rgba(200,169,110,0.3);
+    flex-shrink: 0;
+    animation: perf-flash 3s infinite;
+  }
+
+  .perf:nth-child(odd) { animation-delay: 0.3s; }
+  .perf:nth-child(3n) { animation-delay: 0.7s; }
+
+  @keyframes perf-flash {
+    0%, 90%, 100% { opacity: 0.4; }
+    95% { opacity: 0.9; }
+  }
+
+  .header-meta {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--warm);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0.7;
+  }
+
+  .header-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 8vw, 88px);
+    font-weight: 300;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    color: var(--cream);
+  }
+
+  .header-name em {
+    font-style: italic;
+    color: var(--warm);
+  }
+
+  .header-title {
+    margin-top: 20px;
+    font-size: 12px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+
+  .header-title span {
+    color: var(--warm);
+    margin: 0 12px;
+    font-size: 8px;
+  }
+
+  /* TICKER */
+  .ticker-wrap {
+    overflow: hidden;
+    border-top: 0.5px solid var(--rule);
+    border-bottom: 0.5px solid var(--rule);
+    padding: 10px 0;
+    background: rgba(200,169,110,0.04);
+  }
+
+  .ticker {
+    display: flex;
+    gap: 0;
+    animation: ticker 30s linear infinite;
+    white-space: nowrap;
+    width: max-content;
+  }
+
+  .ticker-item {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--warm);
+    opacity: 0.6;
+    padding: 0 32px;
+  }
+
+  .ticker-dot {
+    color: var(--warm);
+    opacity: 0.3;
+  }
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* MAIN LAYOUT */
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 600px;
+  }
+
+  /* STAT / IDENTITY LEFT */
+  .identity-col {
+    border-right: 0.5px solid var(--rule);
+    padding: 48px 48px 48px;
+  }
+
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--warm);
+    opacity: 0.6;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: var(--rule);
+  }
+
+  .identity-summary {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    line-height: 1.5;
+    color: var(--cream);
+    margin-bottom: 40px;
+    opacity: 0.9;
+  }
+
+  .identity-summary em {
+    font-style: italic;
+    color: var(--warm);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--rule);
+    border: 0.5px solid var(--rule);
+    margin-bottom: 40px;
+  }
+
+  .stat-box {
+    background: var(--ink);
+    padding: 20px 18px;
+  }
+
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 40px;
+    font-weight: 300;
+    color: var(--warm);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-top: 6px;
+  }
+
+  .award-badge {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+    border: 0.5px solid var(--rule);
+    background: rgba(200,169,110,0.04);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .award-badge::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--warm);
+  }
+
+  .award-icon {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    color: var(--warm);
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .award-text-wrap {}
+  .award-title {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--warm);
+    opacity: 0.8;
+    margin-bottom: 4px;
+  }
+
+  .award-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--cream);
+    opacity: 0.8;
+    line-height: 1.4;
+  }
+
+  /* TIMELINE RIGHT */
+  .timeline-col {
+    padding: 48px 48px 48px;
+    overflow: hidden;
+  }
+
+  .timeline {
+    position: relative;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px; bottom: 8px;
+    width: 0.5px;
+    background: linear-gradient(to bottom, transparent, var(--rule) 10%, var(--rule) 90%, transparent);
+  }
+
+  .tl-item {
+    position: relative;
+    padding-left: 28px;
+    margin-bottom: 36px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .tl-item:hover { opacity: 0.75; }
+
+  .tl-dot {
+    position: absolute;
+    left: -4px; top: 8px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    border: 0.5px solid var(--warm);
+    background: var(--ink);
+    transition: background 0.2s;
+  }
+
+  .tl-item:hover .tl-dot,
+  .tl-item.active .tl-dot {
+    background: var(--warm);
+  }
+
+  .tl-period {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--warm);
+    opacity: 0.5;
+    margin-bottom: 4px;
+  }
+
+  .tl-role {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--cream);
+    line-height: 1.2;
+    margin-bottom: 2px;
+  }
+
+  .tl-company {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .tl-detail {
+    font-size: 13px;
+    color: var(--dim);
+    line-height: 1.6;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.3s;
+    opacity: 0;
+  }
+
+  .tl-item.active .tl-detail {
+    max-height: 120px;
+    opacity: 1;
+  }
+
+  /* CRAFT SECTION */
+  .craft-section {
+    border-top: 0.5px solid var(--rule);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .craft-col {
+    padding: 36px 48px;
+    border-right: 0.5px solid var(--rule);
+  }
+
+  .craft-col:last-child { border-right: none; }
+
+  .craft-list {
+    list-style: none;
+    margin-top: 16px;
+  }
+
+  .craft-list li {
+    font-size: 13px;
+    color: var(--dim);
+    padding: 7px 0;
+    border-bottom: 0.5px solid rgba(200,169,110,0.08);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 1.4;
+  }
+
+  .craft-list li::before {
+    content: '';
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--warm);
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+
+  /* CREDITS / SELECTED WORKS */
+  .works-section {
+    border-top: 0.5px solid var(--rule);
+    padding: 48px 48px;
+  }
+
+  .works-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 0.5px solid var(--rule);
+    margin-top: 24px;
+  }
+
+  .work-card {
+    background: var(--ink);
+    padding: 20px 18px;
+    cursor: pointer;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .work-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(200,169,110,0.04);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .work-card:hover::after { opacity: 1; }
+
+  .work-type {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--warm);
+    opacity: 0.5;
+    margin-bottom: 8px;
+  }
+
+  .work-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--cream);
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+
+  .work-director {
+    font-size: 11px;
+    color: var(--dim);
+  }
+
+  /* TOOLS FOOTER */
+  .tools-footer {
+    border-top: 0.5px solid var(--rule);
+    padding: 28px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .tools-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .tool-pill {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--warm);
+    opacity: 0.6;
+    padding: 5px 12px;
+    border: 0.5px solid var(--rule);
+    border-radius: 2px;
+  }
+
+  .footer-contact {
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 0.05em;
+  }
+
+  .footer-contact a {
+    color: var(--warm);
+    text-decoration: none;
+    opacity: 0.8;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .film-header { animation: fade-up 0.6s ease both; }
+  .ticker-wrap { animation: fade-up 0.6s 0.15s ease both; }
+  .main { animation: fade-up 0.6s 0.3s ease both; }
+  .craft-section { animation: fade-up 0.6s 0.45s ease both; }
+  .works-section { animation: fade-up 0.6s 0.6s ease both; }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .main { grid-template-columns: 1fr; }
+    .identity-col { border-right: none; border-bottom: 0.5px solid var(--rule); }
+    .craft-section { grid-template-columns: 1fr; }
+    .craft-col { border-right: none; border-bottom: 0.5px solid var(--rule); }
+    .film-header, .identity-col, .timeline-col, .works-section, .tools-footer { padding-left: 24px; padding-right: 24px; }
+    .craft-col { padding-left: 24px; padding-right: 24px; }
+    .header-name { font-size: 44px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- FILM STRIP PERFS -->
+<div class="film-header">
+  <div class="film-perfs" id="perfs"></div>
+  <div class="header-meta">Dubai, UAE &nbsp;·&nbsp; Creative Producer &nbsp;·&nbsp; Director &nbsp;·&nbsp; Storyteller</div>
+  <div class="header-name">Ahmed <em>Samy</em><br>Amin</div>
+  <div class="header-title">
+    10+ Years
+    <span>◆</span>
+    Film · Television · Brand · Documentary
+    <span>◆</span>
+    UAE & Egypt
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker" id="ticker">
+    <span class="ticker-item">Creative Producer</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">Video Team Lead</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">Short Film Director</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">Casting Director</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">Scriptwriter</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">Brand Storytelling</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">100+ Video Assets</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">23 TV Series</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">8 Feature Films</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">1,500+ Students</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">48hr Film Winner</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">Golden Visa — UAE</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">Creative Producer</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">Video Team Lead</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">Short Film Director</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">Casting Director</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">Scriptwriter</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">Brand Storytelling</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">100+ Video Assets</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">23 TV Series</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">8 Feature Films</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">1,500+ Students</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">48hr Film Winner</span><span class="ticker-dot">◆</span>
+    <span class="ticker-item">Golden Visa — UAE</span><span class="ticker-dot">◆</span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT: IDENTITY -->
+  <div class="identity-col">
+    <div class="section-label">Identity</div>
+
+    <p class="identity-summary">
+      I make stories that <em>move</em>.<br>
+      From scripting to the final cut — across screens, stages, and languages.
+    </p>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-num">10+</div>
+        <div class="stat-label">Years Experience</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">100+</div>
+        <div class="stat-label">Video Assets Produced</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">23</div>
+        <div class="stat-label">TV Series — Casting</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">1.5k+</div>
+        <div class="stat-label">Students Mentored</div>
+      </div>
+    </div>
+
+    <div class="award-badge">
+      <div class="award-icon">✦</div>
+      <div class="award-text-wrap">
+        <div class="award-title">Award — 48hr Film Project, Cairo</div>
+        <div class="award-text">2nd Best Film &amp; Best Script · <em>The Door</em> (2016)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: TIMELINE -->
+  <div class="timeline-col">
+    <div class="section-label">Experience</div>
+
+    <div class="timeline" id="timeline">
+      <div class="tl-item active" onclick="toggle(this)">
+        <div class="tl-dot"></div>
+        <div class="tl-period">2025</div>
+        <div class="tl-role">Creative Producer</div>
+        <div class="tl-company">GTCFX · Dubai</div>
+        <div class="tl-detail">Head of Visuals leading 7-person team. End-to-end production across social, events, interviews and branded storytelling for a global fintech audience.</div>
+      </div>
+
+      <div class="tl-item" onclick="toggle(this)">
+        <div class="tl-dot"></div>
+        <div class="tl-period">2023 – 2024</div>
+        <div class="tl-role">Video Producer</div>
+        <div class="tl-company">B2Broker · Dubai</div>
+        <div class="tl-detail">Produced 100+ assets from ideation to delivery. Built an international freelance network. Full-cycle ownership across campaign, product and event content.</div>
+      </div>
+
+      <div class="tl-item" onclick="toggle(this)">
+        <div class="tl-dot"></div>
+        <div class="tl-period">2018 – 2023</div>
+        <div class="tl-role">Creative Producer</div>
+        <div class="tl-company">Dayer Entertainment · Cairo</div>
+        <div class="tl-detail">Built and scaled a creative production company. Directed award-winning short film The Door. Casting across 23 TV series and 8 feature films.</div>
+      </div>
+
+      <div class="tl-item" onclick="toggle(this)">
+        <div class="tl-dot"></div>
+        <div class="tl-period">2015 – 2018</div>
+        <div class="tl-role">Creative Producer &amp; Studio Lead</div>
+        <div class="tl-company">Studio ZAT · Cairo</div>
+        <div class="tl-detail">Transformed a studio into a creative institution. 7 short films, 150+ workshops, 1,500+ students, 30+ full-time staff.</div>
+      </div>
+
+      <div class="tl-item" onclick="toggle(this)">
+        <div class="tl-dot"></div>
+        <div class="tl-period">2011 – 2015</div>
+        <div class="tl-role">Line Producer</div>
+        <div class="tl-company">Arabica Music · Cairo</div>
+        <div class="tl-detail">Budget oversight, studio coordination, live events, music videos and artist content for musicians and bands across Egypt.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CRAFT -->
+<div class="craft-section">
+  <div class="craft-col">
+    <div class="section-label">Production</div>
+    <ul class="craft-list">
+      <li>Concept to final delivery</li>
+      <li>Pre-production &amp; scripting</li>
+      <li>On-set direction</li>
+      <li>Crew &amp; talent management</li>
+      <li>Budget &amp; logistics</li>
+      <li>Campaign-led storytelling</li>
+    </ul>
+  </div>
+
+  <div class="craft-col">
+    <div class="section-label">Formats</div>
+    <ul class="craft-list">
+      <li>Branded &amp; social video</li>
+      <li>Podcast &amp; interview series</li>
+      <li>Short film &amp; documentary</li>
+      <li>TV commercials</li>
+      <li>Corporate &amp; event coverage</li>
+      <li>AI-generated narrative film</li>
+    </ul>
+  </div>
+
+  <div class="craft-col">
+    <div class="section-label">Tools</div>
+    <ul class="craft-list">
+      <li>Premiere Pro · DaVinci Resolve</li>
+      <li>Final Cut Pro</li>
+      <li>Runway ML · Midjourney</li>
+      <li>Synthesia · Veo3</li>
+      <li>Figma · Canva</li>
+      <li>Photoshop</li>
+    </ul>
+  </div>
+</div>
+
+<!-- SELECTED WORKS -->
+<div class="works-section">
+  <div class="section-label">Selected Credits</div>
+
+  <div class="works-grid">
+    <div class="work-card">
+      <div class="work-type">Short Film · Director &amp; Writer</div>
+      <div class="work-title">The Door</div>
+      <div class="work-director">2nd Best Film · Best Script · Cairo 48hr</div>
+    </div>
+
+    <div class="work-card">
+      <div class="work-type">Short Film · Producer</div>
+      <div class="work-title">No Blaming</div>
+      <div class="work-director">Dir. Amr Samir · 2021</div>
+    </div>
+
+    <div class="work-card">
+      <div class="work-type">Short Film · Producer</div>
+      <div class="work-title">Ali's Secret</div>
+      <div class="work-director">Dir. Mona Dawood · 2020</div>
+    </div>
+
+    <div class="work-card">
+      <div class="work-type">Short Film · Producer</div>
+      <div class="work-title">Once There Was a Boy</div>
+      <div class="work-director">Dir. Antonious Bassily · 2020</div>
+    </div>
+
+    <div class="work-card">
+      <div class="work-type">TV Series · Casting</div>
+      <div class="work-title">Wahet Al Ghoroub</div>
+      <div class="work-director">Dir. Kamla Abouzekri · 2017</div>
+    </div>
+
+    <div class="work-card">
+      <div class="work-type">TV Series · Casting</div>
+      <div class="work-title">Zai El Shams</div>
+      <div class="work-director">Dir. Kamla Abouzekri · 2019</div>
+    </div>
+
+    <div class="work-card">
+      <div class="work-type">TV Show · Casting</div>
+      <div class="work-title">Abla Fahita</div>
+      <div class="work-director">3 Seasons · 2016</div>
+    </div>
+
+    <div class="work-card">
+      <div class="work-type">Commercial · Casting</div>
+      <div class="work-title">Coca-Cola · Chipsy · Etisalat</div>
+      <div class="work-director">Multi-brand campaigns</div>
+    </div>
+
+    <div class="work-card">
+      <div class="work-type">Film · Asst. Director</div>
+      <div class="work-title">Under the Pyramidion</div>
+      <div class="work-director">Dir. Alex Petersen · 2016</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="tools-footer">
+  <div class="tools-row">
+    <div class="tool-pill">UAE Golden Visa</div>
+    <div class="tool-pill">Arabic · English</div>
+    <div class="tool-pill">Dubai-based</div>
+  </div>
+  <div class="footer-contact">
+    <a href="https://aminproduction.com">aminproduction.com</a>
+    &nbsp;·&nbsp; amen.ahmed.samy@gmail.com &nbsp;·&nbsp; +971 54 337 1514
+  </div>
+</div>
+
+<script>
+  // Build perforations
+  const perfs = document.getElementById('perfs');
+  for(let i = 0; i < 60; i++) {
+    const p = document.createElement('div');
+    p.className = 'perf';
+    perfs.appendChild(p);
+  }
+
+  // Timeline toggle
+  function toggle(el) {
+    const items = document.querySelectorAll('.tl-item');
+    items.forEach(i => { if(i !== el) i.classList.remove('active'); });
+    el.classList.toggle('active');
+  }
+</script>
+
+</body>
+</html>
